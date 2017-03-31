@@ -1,0 +1,130 @@
+<!-- This page shows a details of managers when you click on managers no -->
+<div>
+<style>
+.view-detail-content{
+font-family: Courier New;
+font-size: 15px; 
+}
+</style>
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/add-new-customers.png"
+				style="width: 50px; height: 50px;"></img>&nbsp; <span>
+				{{headerTitleText}} </span>
+		</h1>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>Company Details</b>
+		</div>
+		<div class="panel-body">
+			<form name="addManResForm1">
+				<div class="row form-group">
+					<div class="col-lg-4">
+						<label>Company Type</label>
+						<p class="view-detail-content">{{newManRes.companyType}}</p>  
+					</div>
+					<div class="col-lg-4">
+						<label>Company Name</label>
+						<p class="view-detail-content">{{newManRes.companyName}}</p> 						 
+					</div>
+					<div class="col-lg-4">
+						<label>Company PAN</label> 
+						<p class="view-detail-content">{{newManRes.pan}}</p> 						 
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>Customer Support Details</b>
+		</div>
+		<div class="panel-body">
+			<form name="addManResForm2">
+				<div class="row form-group">
+					<div class="col-lg-4">
+						<label>Contact Name</label> 
+						<p class="view-detail-content">{{newManRes.custSupportName}}</p> 
+					</div>
+					<div class="col-lg-3">
+						<label>Contact Number</label> 
+						<p class="view-detail-content">{{ newManRes.custSupportPhone }}</p>						 
+					</div>
+					<div class="col-lg-5">
+						<label>Contact Email</label> 
+						<p class="view-detail-content">{{ newManRes.custSupportEmail }}</p>						 
+					</div>
+				</div>
+			</form>
+		</div>
+	</div> 
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>AttendMe Subscription Details</b>
+		</div>
+		<div class="panel-body">
+			<form name="addManResForm3">
+				<div class="row form-group">
+					<div class="col-lg-6">
+						<label>Subscription Type</label>
+						<p class="view-detail-content">{{ newManRes.curSubscriptionType }}</p>
+					</div>
+					<div class="col-lg-6">
+						<label>Subscription Status </label>
+						<p class="view-detail-content">{{ newManRes.curSubscriptionStatus }}</p>						   
+					</div>
+					<div class="col-lg-6">
+						<label>Subscription Start Date</label>						 
+						 <p class="view-detail-content">{{ newManRes.curSubscriptionStartDate | date:'dd-MM-yyyy'}}</p>						 	
+					</div>
+					<div class="col-lg-6">
+						<label>Subscription End Date</label>
+						<p class="view-detail-content">{{ newManRes.curSubscriptionEndDate | date:'dd-MM-yyyy'}}</p>
+						 
+					</div>
+					
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>Admin Details</b>
+		</div>
+		<div class="panel-body">
+			<form name="addManResForm4">
+				<div class="row form-group">
+					<div class="col-lg-6">
+						<label>Name</label> 
+						<p class="view-detail-content">{{ newUser.name }}</p>
+					</div>
+					<div class="col-lg-6">
+						<label>Mobile</label> 
+						<p class="view-detail-content">{{ newUser.mobile }}</p>
+					</div>
+					<div class="col-lg-6">
+						<label>E-Mail</label> 
+						<p class="view-detail-content">{{ newUser.email }}</p> 						 
+					</div>
+					<div class="col-lg-6">
+						<label>Alternate E-Mail</label> 
+						<p class="view-detail-content">{{ newUser.altEmail }}</p> 
+					</div>
+				</div>
+			</form>			 
+		</div>
+	</div>
+
+	<div class="row text-center">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<button type="button" class="btn btn-danger" ng-click="onCancel()">
+				<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+			</button>
+		 
+		</div>
+	</div>
+</div>

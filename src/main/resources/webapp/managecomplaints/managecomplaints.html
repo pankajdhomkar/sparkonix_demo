@@ -1,0 +1,527 @@
+<div>
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/problem.png" style="width:50px;height:50px;"></img>&nbsp;
+			<span ng-hide="user.role == 'SUPERADMIN'"> Complaints and Regular Servicing</span>
+			<span ng-hide="user.role != 'SUPERADMIN'"> Complaints and Servicing Report</span>
+			
+			<button class="btn btn-primary pull-right" type="button" ng-click="newServiceReq()" 
+			ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN'">
+				<i class="fa fa-plus-circle"></i>&nbsp; Add New Service Request
+			</button>
+		</h1>
+	</div>
+	
+	<ul class="nav nav-tabs">
+		<li ng-class="{active:isSet(1)}"><a href ng-click="setTab(1)"><b>Complaints</b></a></li>
+		<li ng-class="{active:isSet(2)}"><a href ng-click="setTab(2)"><b>Regular Servicing</b></a></li>
+    </ul>
+        
+	<div ng-show="isSet(1)">  
+		<div class="panel panel-default">
+			<div class="panel-heading"><b>Complaints</b></div>
+			<div class="panel-body table-responsive">				
+				<div class="row" ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN' 
+				 || user.role == 'SUPERADMIN'">
+					<div class="form-group">
+						<div class="col-lg-4 col-md-4 col-sm-4">
+							<label>Customer Company Name</label>
+							<select class="form-control" ng-model="searchForm.customer">
+								<option value="">-- Select --</option>
+								<option ng-repeat="item in complaints | unique:'customerId'"  
+								ng-selected="searchForm.customer == item.customerId" 
+								value="{{item.customerId}}">{{item.customerCompanyName}}</option>
+							</select>
+						
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4">
+							<label>Start Date</label>
+							<div class='input-group'>
+								<input type="text" class="form-control date"
+									ng-click="searchFormStartDate=true"
+									datepicker-popup="{{format}}"
+									ng-model="searchForm.startDate"
+									is-open="searchFormStartDate" close-text="Close"
+									placeholder="DD-MM-YYYY" id="searchFormStartDate"> 
+								<label class="input-group-addon" for='searchFormStartDate'>
+									<span class="glyphicon glyphicon-calendar"></span>
+								</label>
+							</div>
+														 
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4">
+							<label>End Date</label>							 
+							<div class='input-group'>
+								<input type="text" class="form-control date"
+									ng-click="searchFormEndDate=true"
+									datepicker-popup="{{format}}"
+									ng-model="searchForm.endDate"
+									is-open="searchFormEndDate" close-text="Close"
+									placeholder="DD-MM-YYYY" id="searchFormEndDate"> 
+								<label class="input-group-addon" for='searchFormEndDate'>
+									<span class="glyphicon glyphicon-calendar"></span>
+								</label>
+							</div>
+							
+						</div>
+					</div>						 					 
+				</div>
+				<br>
+				<div class="row" ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN'
+				 || user.role == 'SUPERADMIN'">
+					<div class="form-group text-center">
+						<div class="col-lg-12 col-md-12 col-sm-12">							  
+							  <button type="button" class="btn btn-primary btn-sm"
+							  ng-click="onSubmitSearchForm()">Search</button>
+							  &nbsp; &nbsp;
+							  <button type="button" class="btn btn-danger btn-sm"
+							  ng-click="onResetSearchForm()">Reset</button>
+						</div>
+					</div>
+				</div>
+				<div class="row" ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN'
+				 || user.role == 'SUPERADMIN'">
+					<div class="col-lg-12 col-md-12 col-sm-12"><hr style="border-color: rgb(221, 221, 221);"></div>
+				</div>
+				<div class="row text-center" ng-if="complaints.length==0"><br>
+					<h4><label>There are no Complaints</label></h4><br>
+				</div>
+				<div class="row text-right" ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN'
+				 || user.role == 'SUPERADMIN'">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<button type="button" class="btn btn-primary btn-sm" id="btnDownloadAsExcel"
+							  ng-click="onDownloadAsExcel()" title="Download As Excel">
+							  <i class="glyphicon glyphicon-download"></i> Download As Excel</button>
+					</div>
+					<br><br>					
+				</div>
+				
+				 
+							  
+				<table datatable class="table table-bordered" ng-if="complaints.length > 0" style="width: 100%;">
+					<thead>
+						<tr>
+							<td><b>Complaint Number</b></td>
+							<td><b>Machine Model</b></td>
+							<td><b>Machine Serial</b></td>
+							<td><b>Reported Date</b></td>
+							<td><b>Assigned Date</b></td>
+							<td ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN' 
+							|| user.role == 'SUPERADMIN'"><b>Assigned To</b></td>
+							<td><b>Closed Date</b></td>
+							<td><b>Status</b></td>							
+							<td class="text-center" ng-hide="user.role == 'SUPERADMIN'"><b>Action</b></td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="complaint in complaints track by $index" class="item">
+							<td><button title="View complaint details"  
+							style="text-align: left;" class="btn-link" type="button" ng-click="viewDetails(complaint)">
+							{{ complaint.issueNumber}}</button></td> 
+							<td>{{ complaint.machineModelNumber }}</td>
+							<td>{{ complaint.machineSerialNumber }}</td>
+							<td>{{ complaint.dateReported | date:"dd-MM-yyyy" }}</td>
+							<td>{{ complaint.dateAssigned | date:"dd-MM-yyyy" }}</td>
+							<td ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN' 
+							|| user.role == 'SUPERADMIN'">{{ complaint.technicianName }}</td>
+							<td>{{ complaint.dateClosed | date:"dd-MM-yyyy" }}</td>
+							<td>{{ complaint.status }}</td> 
+							<td class="text-center" ng-hide="user.role == 'SUPERADMIN'">
+								<button class="btn btn-primary btn-xs" type="button" ng-disabled="complaint.status==='CLOSED'" ng-click="onEditComplaint(complaint)"> 
+									<i class="fa fa-edit"></i>&nbsp;  
+										<span title="Assign To Technician" ng-if="user.role == 'MANUFACTURERADMIN' 
+										|| user.role == 'RESELLERADMIN'">Assign</span>
+										<span title="Change complaint status" ng-if="user.role == 'TECHNICIAN'">Change Status</span>
+									</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+        
+	<div ng-show="isSet(2)"> <!-- ----- Regular Servicing details ----- -->
+		<div class="panel panel-default" >
+			<div class="panel-heading"><b>Regular Servicing Details</b></div>
+			<div class="panel-body">
+				<div class="row text-center" ng-if="services.length==0"><br>
+					<h4><label>There are no Servicing Details</label></h4><br>
+				</div>
+				<table datatable class="table table-bordered table-striped" ng-if="services.length>0" style="width: 100%;">
+					<thead>
+						<tr>
+							<td><b>Machine Name</b></td>							
+							<td><b>Machine QR Code</b></td> 
+							<td><b>Assigned Technician</b></td>
+							<td><b>Assigned Date</b></td>
+							<td><b>Closed Date</b></td>
+							<td><b>Status</b></td>
+							<td ng-hide="user.role == 'SUPERADMIN'" class="text-center"><b>Action</b></td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="service in services track by $index" class="item">
+							<td>{{ service.machine.name }}</td>	
+							<td>{{ service.machine.qrCode }}</td>							 
+							<td>{{ service.assignedTo.name }}</td>	
+							<td>{{ service.servicingAssignedDate | date:"dd-MM-yyyy" }}</td>	
+							<td>{{ service.servicingDoneDate | date:"dd-MM-yyyy" }}</td>
+							<td>{{ service.status }}</td>			
+							<td ng-hide="user.role == 'SUPERADMIN'" class="text-center" >
+								<button class="btn btn-primary btn-xs" type="button" ng-disabled="service.status==='CLOSED'" ng-click="onEditServiceRequest(service)"> 
+									<i class="fa fa-edit"></i>&nbsp;  
+									<span ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN'">Assign To Technician</span>
+									<span ng-if="user.role == 'TECHNICIAN'">Change Status</span>
+								</button>
+							</td>					
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+<!---------------------------------- Modal Dialog to assign issue to technician by web admin ------------------------->
+<div id="actionWebAdmin" class="modal fade" role="dialog">
+	<form name="actionWebAdminForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+					<img src="/assets/images/problem.png" style="width:25px;height:25px;"></img>  
+					Edit Complaint</h4>
+				</div>
+				<div style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 130px;">
+					 <label>Assigned To</label> <label style="color: red">&nbsp*</label> 
+					<select class="form-control" ng-model="updateIssueRecord.assignedTo">
+						<option value="0">-- Select --</option>
+						<option ng-repeat="tech in technicianList"
+							ng-selected="updateIssueRecord.assignedTo == tech.id" value="{{tech.id}}">{{tech.name}}</option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(actionWebAdminForm.$invalid)" data-ng-click="assignComplaintToTechnician()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update 
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div> 
+
+<!---------------------------------- Modal Dialog to update issue status and failure details by technician ------------------------->
+<div id="actionTechnician" class="modal fade" role="dialog">
+	<form name="actionTechnicianForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+					<img src="/assets/images/problem.png" style="width:25px;height:25px;"> 
+					Edit Complaint</h4>
+				</div>
+				<div style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 285px;">
+					 <label>Status</label> <label style="color: red">&nbsp*</label> 
+					<select class="form-control" ng-model="updateIssueRecord.status" ng-required="true">
+						<option value="">-- Select --</option>
+						<option value="ASSIGNED" ng-selected="updateIssueRecord.status == 'ASSIGNED'">ASSIGNED</option>
+						<option value="CLOSED" ng-selected="updateIssueRecord.status == 'CLOSED'">CLOSED</option> 
+					</select>
+					<label>Failure Reason</label> <label style="color: red">&nbsp*</label> 
+					<textarea class="form-control" ng-model="updateIssueRecord.failureReason" 
+					ng-required="true" placeholder="Enter Failure Reason"></textarea>
+					
+					<label>Action Taken</label> <label style="color: red">&nbsp*</label> 
+					<textarea class="form-control" ng-model="updateIssueRecord.actionTaken" 
+					ng-required="true" placeholder="Enter Action Taken"></textarea>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(actionTechnicianForm.$invalid)" data-ng-click="updateComplaintByTechnician()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update 
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------------------- -->
+<!---------------------------------- Modal Dialog for view issue details ------------------------->
+<style>
+.view-detail-content{
+font-family: Courier New;
+font-size: 14px; 
+}
+</style>
+<div id="viewIssueDetails" class="modal fade" role="dialog">
+	<form name="viewIssueDetailsForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">View Details (Compliant No.: {{ viewComplaint.issueNumber }})</h4>
+				</div>
+				<div style="padding: 3%; height: 400px; overflow-y: auto;">
+					<table class="table table-bordered" style="font-size:14px;  width:100%;" >												
+						<tr>
+							<td style="width:40%"><b>Machine Model</b></td>
+							<td style="width:60%">							 
+								<p class="view-detail-content"> 
+								{{ viewComplaint.machineModelNumber}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Machine Serial</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.machineSerialNumber}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Machine Installation Date</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.machineInstallationDate | date:"dd-MM-yyyy"}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Customer Company Name</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.customerCompanyName}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Machine Location</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.machineLocationNameAddress}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Complaint Details</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.details}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Operator Name</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.phonedeviceOperatorName}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Reported Date</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.dateReported | date:"dd-MM-yyyy"}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Assigned Date</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.dateAssigned | date:"dd-MM-yyyy"}}
+								</p>
+							</td>
+						</tr>
+						<tr ng-if="user.role == 'MANUFACTURERADMIN' || user.role == 'RESELLERADMIN'">
+							<td><b>Assigned Technician</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.technicianName}}
+								</p>
+							</td>
+						</tr>						
+						<tr>
+							<td><b>Closed Date</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.dateClosed | date:"dd-MM-yyyy"}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Failure Reason</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.failureReason}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Action Taken</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.actionTaken}}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td><b>Status</b></td>
+							<td>
+								<p class="view-detail-content"> 
+								{{ viewComplaint.status}}
+								</p>
+							</td>
+						</tr> 						 
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div> 
+
+<!---------------------------------- Modal Dialog for adding new service request ------------------------->
+<div id="addServiceRequest" class="modal fade" role="dialog">
+	<form name="addServiceRequestForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Add New Service Request</h4>
+				</div>
+				<div style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 280px;">
+					<label>Machine</label> <label style="color: red">&nbsp*</label>
+					<select class="form-control" ng-model="newServiceRequest.machine.id" ng-required="true">
+						<option value="">-- Select --</option>
+						<option ng-if="m.qrCode==undefined" ng-repeat="m in machineList" ng-selected="newServiceRequest.machineId == m.id" 
+						value="{{m.id}}">{{m.name}}</option>
+						
+						<option ng-if="m.qrCode!=undefined" ng-repeat="m in machineList" ng-selected="newServiceRequest.machineId == m.id" 
+						value="{{m.id}}">{{m.qrCode}} , {{m.name}} </option>
+						 
+					</select>
+					 <label>Description</label> <label style="color: red">&nbsp*</label>
+					 <textarea class="form-control" ng-model="newServiceRequest.details" ng-required="true"
+					 placeholder="Enter Description">
+					 </textarea>
+					 
+					 <label>Assigned To</label> <label style="color: red">&nbsp*</label>
+					<select class="form-control" ng-model="newServiceRequest.assignedTo.id" ng-required="true">
+						<option value="">-- Select --</option>
+						<option ng-repeat="t in technicianList"
+							ng-selected="newServiceRequest.assignedTo == t.id" value="{{t.id}}">{{t.name}}</option>
+					</select>
+					<!-- <label>Notify other via SMS</label>
+					<input class="form-control" placeholder="Enter mobile number to notifiy"> -->
+					  
+					
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(addServiceRequestForm.$invalid)" data-ng-click="onSaveServiceRequest()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Add
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div> 
+<!---------------------------------- Modal Dialog for update service request STATUS by technician ------------------------->
+<div id="editServiceRequestByTechnician" class="modal fade" role="dialog">
+	<form name="editServiceRequestByTechnicianForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit Service Request</h4>
+				</div>
+				<div style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 130px;">
+					 <label>Status</label> <label style="color: red">&nbsp*</label> 
+					<select class="form-control" ng-model="updatedRecord.status" ng-required="true">
+						<option value="">-- Select --</option>
+						<option value="ASSIGNED">ASSIGNED</option>
+						<option value="CLOSED">CLOSED</option>
+					</select>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="onCancelRegularService()">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(editServiceRequestByTechnicianForm.$invalid)" data-ng-click="assignServiceRequestToTechnician()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update 
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!---------------------------------- Modal Dialog for update service request by web admin------------------------->
+<div id="editServiceRequest" class="modal fade" role="dialog">
+	<form name="editServiceRequestForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit Service Request</h4>
+				</div>
+				<div style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 230px;">
+					<label>Machine</label> <label style="color: red">&nbsp*</label>
+					<select class="form-control" ng-model="updatedRecord.machine.id" ng-required="true" ng-disabled="true" >
+						<option value="">-- Select --</option>
+						<!-- <option ng-repeat="m in machineList" ng-selected="updatedRecord.machine.id == m.id" 
+						value="{{m.id}}" >{{m.name}}</option> -->
+						<option ng-if="m.qrCode==undefined" ng-repeat="m in machineList" ng-selected="updatedRecord.machine.id == m.id" 
+						value="{{m.id}}">{{m.name}}</option>
+						
+						<option ng-if="m.qrCode!=undefined" ng-repeat="m in machineList" ng-selected="updatedRecord.machine.id == m.id" 
+						value="{{m.id}}">{{m.qrCode}} , {{m.name}} </option>
+					</select>
+					 <label>Description</label> 
+					 <input class="form-control" ng-model="updatedRecord.details">
+					 <label>Assigned To</label> <label style="color: red">&nbsp*</label>
+					<select class="form-control" ng-model="updatedRecord.assignedTo.id">
+						<option value="">-- Select --</option>
+						<option ng-repeat="t in technicianList"
+							ng-selected="updatedRecord.assignedTo.id == t.id" value="{{t.id}}">{{t.name}}</option>
+					</select>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="onCancelRegularService()">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(editServiceRequestForm.$invalid)" data-ng-click="assignServiceRequestToTechnician()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update 
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

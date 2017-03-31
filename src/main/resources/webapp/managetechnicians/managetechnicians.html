@@ -1,0 +1,155 @@
+<div>
+<div class="row">
+	<h1 class="page-header">
+		<img src="/assets/images/technician.png" style="width:50px;height:50px;"></img>&nbsp;
+		<span> Manage Technicians</span>
+		<button class="btn btn-primary pull-right" type="button" data-toggle="modal"
+			data-target="#addTechnician"> <i class="fa fa-plus-circle"></i>&nbsp; Add New Technician
+		</button>
+	</h1>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><b>Technicians</b></div>
+	<div class="panel-body table-responsive">
+		<div class="row text-center" ng-if="technicians.length==0">
+			<br>
+			<h4><label>There are no Technicians</label></h4>
+			<br>
+		</div>
+		<table datatable class="table table-bordered table-striped" ng-if="technicians.length>0">
+			<thead>
+				<tr>
+					<td><b>Name</b></td>
+					<td class="text-center"><b>Mobile</b></td>
+					<td><b>E-Mail</b></td>
+					<td><b>Alternate E-Mail</b></td>
+					<td class="text-center"><b>Actions</b></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="technician in technicians track by $index" class="item">
+					<td>{{technician.name}}</td>
+					<td class="text-center">{{technician.mobile}}</td>
+					<td>{{technician.email}}</td>
+					<td>{{technician.alt_email}}</td>
+					<td class="text-center" >
+						<button class="btn btn-primary btn-xs" type="button"
+							ng-click="onEdit(technician)"> <i class="fa fa-edit"></i>&nbsp; Edit
+						</button>
+						
+						 
+						<!-- <button class="btn btn-danger btn-xs" type="button"
+							ng-click="onDelete(technician)"> <i class="fa fa-cross"></i>&nbsp; Delete
+						</button> -->
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+</div>
+	
+<!-- ---------------------------------------------------------------------------------------------------- -->
+<!---------------------------------- Modal Dialog for adding new technician ------------------------->
+<div id="addTechnician" class="modal fade" role="dialog">
+	<form name="addTechnicianForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+					<img src="/assets/images/add-new-technician.png" style="width:25px;height:25px;"></img>  
+					Add Technician</h4>
+				</div>
+				<div
+					style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 400px;">
+					<label>Name</label> <label style="color: red">&nbsp*</label>
+						<input class="form-control" ng-model="newTechnician.name" ng-required="true" 
+						placeholder="Enter Name">
+					<label>E-Mail</label> <label style="color: red">&nbsp*</label>
+						<input type="email" class="form-control" ng-model="newTechnician.email" ng-required="true" 
+						placeholder="Enter E-Mail">
+					<label>Alternate E-Mail</label>
+						<input type="email" class="form-control" ng-model="newTechnician.altEmail" 
+						placeholder="Enter Alternate E-Mail">
+					<label>Mobile</label> <label style="color: red">&nbsp*</label>
+						 
+						<input type="text" class="form-control" ng-model="newTechnician.mobile"
+								placeholder="Enter Mobile Number with country code" ng-required="true">							 
+						<div style=" color:gray; font-family: verdana; font-size: 12px;">
+							Eg. +91xxxxxxxxxx</div>
+							
+					<label>Password</label> <label style="color: red">&nbsp*</label>
+						<input type="password"  class="form-control" ng-model="newTechnician.password" 
+						ng-required="true" placeholder="Enter Password">
+					<label>Re-enter Password</label> <label style="color: red">&nbsp*</label>
+						<input type="password"  class="form-control" ng-model="password2" ng-required="true"
+						placeholder="Re-enter Password">
+					<span ng-show="newTechnician.password !== password2" style="color:red">Password mismatch</span>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(addTechnicianForm.$invalid) || (newTechnician.password !== password2)" data-ng-click="addNewTechnician()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Add
+					</button>
+				</div>
+				 
+			</div>
+		</div>
+		
+	</form>
+	
+</div>
+
+<!-- ---------------------------------------------------------------------------------------------------- -->
+<!---------------------------------- Modal Dialog for update technician ------------------------->
+<div id="editTechnician" class="modal fade" role="dialog">
+	<form name="editTechnicianForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+					<img src="/assets/images/add-new-technician.png" style="width:25px;height:25px;"></img> 
+					Edit Technician</h4>
+				</div>
+				<div
+					style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 295px;">
+					<label>Name</label> <label style="color: red">&nbsp*</label>
+						<input class="form-control" ng-model="editTechnician.name" ng-required="true"
+						placeholder="Enter Name">
+					<label>E-Mail</label> <label style="color: red">&nbsp*</label>
+						<input type="email" class="form-control" ng-model="editTechnician.email" ng-required="true"
+						placeholder="Enter E-Mail">
+					<label>Alternate E-Mail</label>
+						<input type="email" class="form-control" ng-model="editTechnician.altEmail"
+						placeholder="Enter Alternate E-Mail">
+					<label>Mobile</label> 
+					<label style="color: red">&nbsp*</label>
+					
+					 <input type="number" class="form-control" ng-model="editTechnician.mobile"
+								placeholder="Enter Mobile Number with country code" 								 
+								ng-required="true">
+						
+						 <div style=" color:gray; font-family: verdana; font-size: 12px;">
+							Eg. +91xxxxxxxxxx</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal" 
+						ng-disabled="(editTechnicianForm.$invalid)" data-ng-click="updateTechnician()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update 
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

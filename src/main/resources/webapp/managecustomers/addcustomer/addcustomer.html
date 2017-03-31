@@ -1,0 +1,835 @@
+<div>
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/add-new-customers.png"
+				style="width: 50px; height: 50px;"></img>&nbsp; <span>
+				{{headerTitleText}} </span>
+		</h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li ng-repeat="val in tabDetails" ng-if="mode == 'add'"
+			ng-class="{active:isSet($index+1)}"><a href
+			ng-click="(val.click)($index+1)"><b>{{val.title}}</b></a></li>
+		<li ng-repeat="val in tabDetails" ng-if="mode == 'edit'"
+			ng-class="{active:isSet($index+1)}"><a href
+			ng-click="setTab($index+1)"><b>{{val.title}}</b></a></li>
+	</ul>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>{{panelTitle}}</b>
+		</div>
+		<div class="panel-body">
+			<div ng-show="isSet(1)">
+				<!-- ----- Company details ----- -->
+				<form name="addCustomerForm">
+					<div class="row">
+						<div class="col-lg-6 form-group">
+							<label>Company Name</label><label style="color: red">&nbsp*</label>
+							<input class="form-control" ng-model="companyDetail.companyName"
+								ng-disabled="mode == 'edit'" ng-required="true"
+								placeholder="Enter Company Name">
+						</div>
+						<div class="col-lg-5 form-group">
+							<label>Company PAN</label><label style="color: red">&nbsp*</label>
+							<input class="form-control" ng-model="companyDetail.pan"
+								ng-disabled="mode == 'edit'" ng-required="true"
+								placeholder="Enter Company PAN" maxlength="10">
+						</div>						
+						<div class="col-lg-1 form-group">
+							<p>&nbsp;</p>
+							 <button type="button" ng-click="checkCompanyPanAvailability()" class="btn btn-primary btn-xs"
+								title="Check company PAN number availability" ng-disabled="mode == 'edit'" >
+								<span class="glyphicon glyphicon-check"></span> Check
+							</button>						
+						</div>
+						<div class="col-lg-12 pull-right form-group">
+							<span class="col-lg-6 pull-right" style=" font-size:12px; color : {{panValidationMsgColor}};">
+							{{panValidationMsg}}</span>
+						</div>
+						
+						<div class="col-lg-6 form-group">
+							<label>Contact Person Name</label><label style="color: red">&nbsp*</label>
+							<input class="form-control"
+								ng-model="companyDetail.custSupportName"
+								placeholder="Enter Contact Person Name">
+						</div>
+						<div class="col-lg-6 form-group">
+							<label>Contact Phone Number</label><label style="color: red">&nbsp*</label>
+							<input class="form-control" ng-required="true"
+								ng-model="companyDetail.custSupportPhone"
+								placeholder="Enter Contact Phone Number">
+							<span style=" color:gray; font-family: verdana; font-size: 12px;">
+							Eg. 020-27470643 OR +91xxxxxxxxxx</span>	
+								
+						</div>
+						<div class="col-lg-6 form-group">							 
+							<label>AttendMe Subscription Type</label><label style="color: red">&nbsp*</label>
+							 
+							<select ng-required="true" class="form-control"
+								ng-model="companyDetail.curSubscriptionType" >
+								<option ng-repeat="cst in curSubscriptionTypes"
+									ng-selected="companyDetail.curSubscriptionType == cst"
+									value="{{cst}}">{{cst}}</option>
+							</select>
+
+						</div>
+						<div class="col-lg-6 form-group">
+							<label>AttendMe Subscription Status </label><label style="color: red">&nbsp*</label>
+							 
+							<select ng-required="true" class="form-control"
+								ng-model="companyDetail.curSubscriptionStatus" >
+								<option ng-repeat="cssd in curSubscriptionStatusData"
+									ng-selected="companyDetail.curSubscriptionStatus == cssd"
+									value="{{cssd}}">{{cssd}}</option>
+							</select>
+						</div>
+						
+						<!-- Hide dates if status is INACTIVE -->
+						<div ng-hide="companyDetail.curSubscriptionStatus=='INACTIVE'">
+						<div class="col-lg-6 form-group">
+							<label>AttendMe Subscription Start Date</label><label style="color: red">&nbsp*</label>
+							<div class='input-group'>
+								<input type="text" class="form-control date"
+									ng-click="startDate=true" datepicker-popup="{{format}}"
+									ng-model="companyDetail.curSubscriptionStartDate"
+									is-open="startDate" close-text="Close" 
+									ng-required="companyDetail.curSubscriptionStatus!='INACTIVE'"
+									placeholder="DD-MM-YYYY"
+									id="companyDetailCurSubscriptionStartDate" ng-change="setCustomerSubEndDate()"> <label
+									class="input-group-addon"
+									for='companyDetailCurSubscriptionStartDate'> <span
+									class="glyphicon glyphicon-calendar"></span>
+								</label>
+							</div>
+						</div>
+						<div class="col-lg-6 form-group">
+							<label>AttendMe Subscription End Date</label><label style="color: red">&nbsp*</label>
+							<div class='input-group'>
+								<input type="text" class="form-control date"
+									ng-click="endDate=true" datepicker-popup="{{format}}"
+									ng-model="companyDetail.curSubscriptionEndDate"
+									is-open="endDate" close-text="Close" 
+									ng-required="companyDetail.curSubscriptionStatus!='INACTIVE'"
+									placeholder="DD-MM-YYYY"
+									id="companyDetailCurSubscriptionEndDate"> <label
+									class="input-group-addon"
+									for='companyDetailCurSubscriptionEndDate'> <span
+									class="glyphicon glyphicon-calendar"></span>
+								</label>
+							</div>
+						</div>
+					</div>	
+						
+					</div>
+				</form>
+			</div>
+
+			<div ng-show="isSet(2)">
+				<!-- ----- Factory Locations ----- -->
+				<form name="addLocationForm">
+					<div ng-init="getFactoryLocations()">
+						<div class="row text-right">
+							<div class="col-lg-12 col-md-12 col-sm-12">
+								<button class="btn btn-primary" type="button"
+									ng-click="addNewLocation()" data-toggle="modal"
+									data-target="#addLocation">
+									<i class="fa fa-plus-circle"></i>&nbsp; Add New Location
+								</button>
+							</div>
+						</div>
+						<hr />
+						<div class="row text-center" ng-if="factoryLocations.length==0">
+							<div class="col-lg-12 col-md-12 col-sm-12">
+								<h5>
+									<label>There are no Factory Locations</label>
+								</h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
+								<table datatable dt-options="{paging: true}"
+									class="table table-bordered table-striped"
+									ng-if="factoryLocations.length>0" style="width: 100%;">
+									<thead>
+										<tr>
+											<td><b>Location ID</b></td>
+											<td><b>Location Address</b></td>
+											<td><b>Contact Person</b></td>
+											<td><b>Contact Number</b></td>
+											<td><b>Action</b></td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="location in factoryLocations track by $index"
+											class="item">
+											<td>{{location.id}}</td>
+											<td>{{location.companyLocationAddress.locationName}} <br>
+												{{location.companyLocationAddress.locationAddress}}
+											</td>
+											<td>{{location.contactPerson}}</td>
+											<td>{{location.contactMobile}}</td>
+											<td>
+												<button type="button" class="btn btn-primary btn-xs"
+													ng-click="editLocation(location)" data-toggle="modal"
+													data-target="#addLocation"
+													ng-disabled="location.onBoardedBy!=user.id && user.role!='SUPERADMIN'">
+													<span class="glyphicon glyphicon-edit"></span> Edit
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					</div>
+				</form>
+
+			</div>
+
+			<div ng-show="isSet(3)">
+				<!-- ----- Machines ----- -->
+				<div class="row text-right" align="right">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<a target="_self" ng-href="{{ sampleFilePath }}" download="{{sampleFileName}}" >
+							<button title="Download sample for bulk machine upload" class="btn btn-primary" type="button"
+								ng-click="">
+								<i class="glyphicon glyphicon-download"></i>&nbsp; Download Sample
+							</button> 
+						</a>
+						<button title="Upload bulk machine using excel sheet" class="btn btn-primary" type="button"
+							ng-click="showBulkUploadDiv()">
+							<i class="glyphicon glyphicon-upload"></i>&nbsp; Bulk Add Machine
+						</button>
+						
+						<button title="Add new machine" class="btn btn-primary" type="button"
+							ng-click="addNewMachine()" data-toggle="modal"
+							data-target="#addMachine">
+							<i class="fa fa-plus-circle"></i>&nbsp; Add New Machine
+						</button>
+					</div>
+				</div>
+				 <hr />
+				 <div style=" border:1px solid gray; padding:20px;"   ng-show="bulkUploadDivFlag">	
+					<div class="row">									
+						<div class="col-lg-12 col-md-12 col-sm-12">
+								<span class="col-lg-6 col-md-6 col-sm-6">
+									<h5><label>Upload Bulk Machine</label></h5>
+								</span>
+						</div>							
+						<div class="col-lg-12 col-md-12 col-sm-12">
+								<span class="col-lg-9 col-md-9 col-sm-9">
+									<input id="uploadFile" type="file"  class="btn" accept="xlsx">
+									<span style=" color:gray; font-family: verdana; font-size: 12px;">
+									(Only .xlsx file type allowed)</span> 
+								</span>
+								<span class="col-lg-3 col-md-3 col-sm-3">
+									<button id="btnUploadBulkMachine" ng-click="uploadExcelFile()" class="pull-center btn btn-success">
+									{{btnUploadBulkMachine}}
+									</button> &nbsp; &nbsp;
+									<button ng-click="hideBulkUploadDiv()" class="btn pull-center btn-danger">Cancel
+									</button>
+								</span>								
+						</div> 	
+					</div>
+					<h1>&nbsp;</h1>
+				</div>
+				
+				<hr />
+				<span ng-show="!bulkUploadDivFlag">
+				<div class="row text-center" ng-if="machinesData.length==0">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<h5>
+							<label>There are no machines available</label>
+						</h5>
+					</div>
+				</div>
+				<!-- ------------------------------------------------------------------- -->
+				<div class="panel panel-default"
+					ng-repeat="location in locationNames track by $index">
+					<div class="panel-heading">
+						<b>Location: </b>
+						{{machineGroupedByLocation[location][0].location.companyLocationAddress.locationName}},
+						{{machineGroupedByLocation[location][0].location.companyLocationAddress.locationAddress}}
+
+						<a title="Expand" class="btn pull-right"
+							ng-class="{false: 'btn-primary fa fa-minus', true: 'btn-primary fa fa-plus'}[!panelcollapse[$index]]"
+							ng-click="panelcollapse[$index] = !panelcollapse[$index]"></a> <br>
+						<b>Number of Machines: </b>{{machineGroupedByLocation[location].length}}
+					</div>
+					<div class="panel-body" ng-if="panelcollapse[$index]">
+						<div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
+							<table id="machineListTable{{$index}}" datatable
+								class="table table-bordered table-striped" style="width: 100%;">
+								<thead>
+									<tr>
+										<td><b>Serial Number</b></td>
+										<td><b>Model Number</b></td>
+										<td><b>Manufacturer</b></td>
+										<td><b>Reseller</b></td>
+										<td><b>Location</b></td>
+										<td align="center"><b>Actions</b></td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										ng-repeat="machine in machineGroupedByLocation[location] track by $index"
+										class="item">
+										<td>{{machine.serialNumber}}</td>
+										<td>{{machine.modelNumber}}</td>
+										<td>{{machine.manufacturer.companyName}}</td>
+										<td>{{machine.reseller.companyName}}</td>
+										<td><span
+											ng-if="(machine.location.companyLocationAddress.locationAddress)!=null">
+												{{machine.location.companyLocationAddress.locationName}},
+												{{machine.location.companyLocationAddress.locationAddress}}
+										</span> <span align="center"
+											ng-if="(machine.location.companyLocationAddress.locationAddress)==null">
+												<font color="red"> -- </font>
+										</span></td>
+										<td>
+											<button type="button" class="btn btn-primary btn-xs"
+												ng-click="editMachine(machine)" data-toggle="modal"
+												data-target="#addMachine">
+												<span class="glyphicon glyphicon-edit"></span> Edit
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				</span>
+				<!-- -------------------------------------------------------------------------------- -->
+			</div>
+			<!-- END ng-show="isSet(3)" -->
+
+			<div ng-show="isSet(4)">
+				<!-- ----- Phone Devices ----- -->
+				<div class="row text-right" align="right">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<button class="btn btn-primary" type="button"
+							ng-click="addNewOperator()" data-toggle="modal"
+							data-target="#addOperator">
+							<i class="fa fa-plus-circle"></i>&nbsp; Add New Operator
+						</button>
+					</div>
+				</div>
+				<hr />
+				<div class="row text-center" ng-if="phoneDevicesData.length==0">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<h5>
+							<label>There are no Operator available</label>
+						</h5>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
+						<table datatable dt-options="{paging: true}"
+							class="table table-bordered table-striped"
+							ng-if="phoneDevicesData.length>0" style="width: 100%;">
+							<thead>
+								<tr>
+									<td><b>Sr.No</b></td>
+									<td><b>Operator Name</b></td>
+									<td><b>Mobile Number</b></td>
+									<td><b>Location Assigned</b></td>
+									<td class="text-center"><b>Actions</b></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="phoneDevice in phoneDevicesData track by $index"
+									class="item">
+									<td>{{$index+1}}</td>
+									<td>{{phoneDevice.operatorName}}</td>
+									<td>{{phoneDevice.phoneNumber}}</td>
+									<td>
+										{{phoneDevice.companyLocation.companyLocationAddress.locationName}},
+										{{phoneDevice.companyLocation.companyLocationAddress.locationAddress}}
+									</td>
+									<td  class="text-center">
+										<button type="button" class="btn btn-primary btn-xs"
+											ng-click="editOperator(phoneDevice)" data-toggle="modal"
+											data-target="#addOperator">
+											<span class="glyphicon glyphicon-edit"></span> Edit
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ----------- BACK SAVE NEXT CANCEL BUTTONS ---------- -->
+		<div class="row">
+			<div class="col-lg-12 text-center" style="margin-bottom: 5%;">
+				<button type="button" class="btn btn-primary"
+					ng-show="activeTabNumber!=1" ng-click="onBack()">
+					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>Go
+					Back
+				</button>
+				<button id="btnSaveAndNext" ng-hide="activeTabNumber==4" type="button"
+					class="btn btn-success" ng-click="onSaveAndNext()"
+					ng-disabled="addCustomerForm.$invalid && mode == 'add'">
+					<span class="fa fa-check" aria-hidden="true"></span>{{saveButtonText}}
+				</button>
+				<button type="button" class="btn btn-danger" ng-click="onCancel()">
+					<span class="fa fa-times" aria-hidden="true"></span>Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!------------ - Modal for adding new factory location ------------------------------------>
+<div id="addLocation" class="modal fade" role="dialog">
+	<form name="addLocationForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+						<img src="/assets/images/add-new-factory-location.png"
+							style="width: 25px; height: 25px;"></img> {{locationModalTitle}}
+					</h4>
+				</div>
+				<div
+					style="padding: 3%; padding-right: 10%; padding-left: 10%; overflow: auto; height: auto;">
+					<label>Location Name </label><label style="color: red">&nbsp*</label>
+					<input class="form-control"
+						ng-model="companyLocation.companyLocationAddress.locationName"
+						ng-required="true" placeholder="Enter Location Name"> <label>Location
+						Address</label> <label style="color: red">&nbsp*</label>
+					<textarea class="form-control"
+						ng-model="companyLocation.companyLocationAddress.locationAddress"
+						ng-required="true" placeholder="Enter Location Address"> 
+					</textarea>
+
+					<label>Contact Person </label> <label style="color: red">&nbsp*</label>
+					<input class="form-control"
+						ng-model="companyLocation.contactPerson" ng-required="true"
+						placeholder="Enter Contact Person"> 
+					<label>Contact Phone Number</label><label style="color: red">&nbsp*</label> 
+					<input class="form-control" ng-model="companyLocation.contactMobile"
+						ng-required="true" placeholder="Enter Contact Phone Number">
+					<span style=" color:gray; font-family: verdana; font-size: 12px;">
+							Eg. 020-27470643 OR +91xxxxxxxxxx</span>	
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal"
+						ng-disabled="addLocationForm.$invalid"
+						data-ng-click="onSaveLocation()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Submit
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!-- ---------------------------------------------------------------------------------------------------->
+<!-- -------------------------------- Modal Dialog for adding new machine ---------------------------------->
+<div id="addMachine" class="modal fade" role="dialog">
+	<form name="addMachineForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+						<img src="/assets/images/add-new-machine.png"
+							style="width: 25px; height: 25px;"></img> {{machineModalTitle}}
+					</h4>
+				</div>
+				<div style="padding: 2%; overflow-y: scroll; height: 450px;">
+					<div class="panel panel-default">
+						<div class="panel-heading">Machine Details</div>
+						<div class="panel-body">
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Name</label> <input class="form-control"
+										ng-model="machine.name" placeholder="Enter Name">
+								</div>
+								<div class="col-lg-6">
+									<label>QR Code  </label>									 
+										<button type="button" ng-click="checkQRCodeAvailability()" 
+										class="pull-right btn btn-primary btn-xs"
+											title="Check QR Code availability" ng-disabled="editMode" >
+											<span class="glyphicon glyphicon-check"></span> Check
+										</button>		
+									 
+									<!-- ---------------------------------------- -->
+									<div class="input-group" title="QR Code eg- ( xxxx-xxxx-xxxx )">
+										<input type="text" ng-model="qrcode.part1"
+											class="form-control" placeholder="xxxx" maxlength="4">
+										<span class="input-group-addon">-</span> <input type="text"
+											ng-model="qrcode.part2" class="form-control"
+											placeholder="xxxx" maxlength="4"> <span
+											class="input-group-addon">-</span> <input type="text"
+											ng-model="qrcode.part3" class="form-control"
+											placeholder="xxxx" maxlength="4">
+									</div>
+									<!-- ----------------------------------------- -->
+								</div>
+								<div class="col-lg-6 pull-right">								
+									<span style=" font-size:12px; color : {{qrCodeValidationMsgColor}};">
+									{{qrCodeValidationMsg}}</span>
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Serial Number</label><label style="color: red">&nbsp*</label>
+									<input class="form-control" ng-model="machine.serialNumber"
+										ng-required="true" placeholder="Enter Serial Number">
+								</div>
+								<div class="col-lg-6">
+									<label>Model Number</label><label style="color: red">&nbsp*</label>
+									<input class="form-control" ng-model="machine.modelNumber"
+										ng-required="true" placeholder="Ener Model Number">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Description</label> <input class="form-control"
+										ng-model="machine.description" placeholder="Enter Description">
+								</div>
+								<div class="col-lg-6">
+									<label>Machine Year</label> <input class="form-control"
+										ng-model="machine.machineYear"
+										placeholder="Enter Machine Year">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Manufacturer</label><label style="color: red">&nbsp*</label>
+									 
+									<span ng-if="user.role == 'MANUFACTURERADMIN'" >
+										 <div style="font-family:courier new; background-color: #EEE; 
+										 min-height: 33px;" 	ng-repeat="m in manufacturersList " 
+												ng-show="m.id==user.companyDetailsId">
+												<b>{{m.companyName}}</b>  										
+										</div>  
+										<!-- <select ng-required="true" class="form-control"
+											ng-model="machine.manufacturerId" ng-disabled="true"
+											 
+											<option value="">-- Select --</option>
+											<option
+												ng-repeat="m in manufacturersList"
+												ng-selected="user.companyDetailsId == m.id" 
+												value="{{m.id}}">{{m.companyName}}</option>
+										</select>  -->  
+									</span>
+									  
+									<div ng-if="user.role == 'SUPERADMIN' || user.role == 'SALESTEAM' || user.role == 'RESELLERADMIN'">
+										<select ng-required="true" class="form-control"
+											ng-model="machine.manufacturerId">
+											<option value="">-- Select --</option>
+											<option ng-repeat="m in manufacturersList"
+												ng-selected="machine.manufacturerId == m.id" value="{{m.id}}">{{m.companyName}}</option>
+										</select>
+									</div>
+									
+								</div>
+								<div class="col-lg-6">
+									<label>Reseller</label> 
+									<span ng-if="user.role == 'RESELLERADMIN'">
+										<!-- <select class="form-control" ng-model="machine.resellerId" ng-disabled="true">
+											<option value="">-- Select --</option>
+											<option ng-repeat="r in resellersList" ng-if="user.companyDetailsId == r.id"
+												ng-selected="user.companyDetailsId == r.id" value="{{r.id}}">{{r.companyName}}</option>
+										</select> -->
+										<div style="font-family:courier new; background-color: #EEE;
+										min-height: 33px;" 	
+										ng-repeat="r in resellersList " 
+												ng-show="r.id==user.companyDetailsId">
+												<b>{{r.companyName}}</b>  										
+										</div>
+									</span>
+									<div ng-if="user.role == 'SUPERADMIN' || user.role == 'SALESTEAM' || user.role == 'MANUFACTURERADMIN' ">
+										<select class="form-control" ng-model="machine.resellerId">
+											<option value="">-- Select --</option>
+											<option ng-repeat="r in resellersList"
+												ng-selected="machine.resellerId == r.id" value="{{r.id}}">{{r.companyName}}</option>
+										</select>
+									</div>	
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Installation Date</label>
+									<div class='input-group'>
+										<input type="text" class="form-control date"
+											ng-click="installationDate=true"
+											datepicker-popup="{{format}}"
+											ng-model="machine.installationDate"
+											is-open="installationDate" close-text="Close"
+											placeholder="DD-MM-YYYY" id="machineInstallationDate">
+										<label class="input-group-addon" for='machineInstallationDate'>
+											<span class="glyphicon glyphicon-calendar"></span>
+										</label>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<label>Warranty Expiry Date</label>
+									<div class='input-group'>
+										<input type="text" class="form-control date"
+											ng-click="warrantyExpiryDate=true"
+											datepicker-popup="{{format}}"
+											ng-model="machine.warrantyExpiryDate"
+											is-open="warrantyExpiryDate" close-text="Close"
+											placeholder="DD-MM-YYYY" id="machineWarrantyExpiryDate">
+										<label class="input-group-addon"
+											for='machineWarrantyExpiryDate'> <span
+											class="glyphicon glyphicon-calendar"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Location</label><label style="color: red">&nbsp*</label>
+									<select class="form-control" ng-model="machine.locationId"
+										ng-required="true">
+										<option value="">-- Select --</option>
+										<option ng-repeat="loc in companyLocationsDropdown"
+											ng-selected="machine.locationId == loc.id" value="{{loc.id}}">
+											<span styly='text-color:darkblue;'>{{loc.companyLocationAddress.locationName}}</span>,
+											{{loc.companyLocationAddress.locationAddress}}
+										</option>
+									</select>
+								</div>
+								<div class="col-lg-6">
+									<label>Support Assistance AttendMe</label><label
+										style="color: red">&nbsp*</label>
+									<div class="form-group">
+										<input type="radio" id="machineSupportAssistanceMan"
+											ng-model="machine.supportAssistance" value="MANUFACTURER" />
+										<label for="machineSupportAssistanceMan">Manufacturer</label>
+										&nbsp; &nbsp; <input type="radio"
+											id="machineSupportAssistanceRes"
+											ng-model="machine.supportAssistance" value="RESELLER" /> <label
+											for="machineSupportAssistanceRes">Reseller</label>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- END MACHINE DETAILS PANEL -->
+
+
+					<div class="panel panel-default">
+						<div class="panel-heading">Machine AMC Details</div>
+						<div class="panel-body">
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>AMC Type</label> <select ng-model="machine.curAmcType"
+										ng-options="curAmcType for curAmcType in curAmcTypes"
+										class="form-control"
+										ng-init="machine.curAmcType = curAmcTypes[0]">
+									</select>
+								</div>
+								<div class="col-lg-6">
+									<label>AMC Status</label> <select
+										ng-model="machine.curAmcStatus"
+										ng-options="curAmcStatus for curAmcStatus in curAmcStatusData"
+										class="form-control"
+										ng-init="machine.curAmcStatus = curAmcStatusData[0]">
+									</select>
+								</div>
+							</div>
+							<div ng-hide="machine.curAmcStatus=='INACTIVE'" class="row form-group">
+								<div class="col-lg-6">
+									<label>AMC Start Date</label>
+									<div class='input-group'>
+										<input type="text" class="form-control date"
+											ng-click="curAmcStartDate=true" datepicker-popup="{{format}}"
+											ng-model="machine.curAmcStartDate" is-open="curAmcStartDate"
+											close-text="Close" placeholder="DD-MM-YYYY"
+											id="machineCurAmcStartDate"> <label
+											class="input-group-addon" for='machineCurAmcStartDate'>
+											<span class="glyphicon glyphicon-calendar"></span>
+										</label>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<label>AMC End Date</label>
+
+									<div class='input-group'>
+										<input type="text" class="form-control date"
+											ng-click="curAmcEndDate=true" datepicker-popup="{{format}}"
+											ng-model="machine.curAmcEndDate" is-open="curAmcEndDate"
+											close-text="Close" placeholder="DD-MM-YYYY"
+											id="machineCurAmcEndDate"> <label
+											class="input-group-addon" for='machineCurAmcEndDate'>
+											<span class="glyphicon glyphicon-calendar"></span>
+										</label>
+									</div>
+
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">AttendMe Subscription Details</div>
+						<div class="panel-body">
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Subscription Type</label><label style="color: red">&nbsp*</label>
+									<select ng-model="machine.curSubscriptionType"
+										ng-required="true"
+										ng-options="curSubscriptionType for curSubscriptionType in curSubscriptionTypes"
+										class="form-control">
+									</select>
+
+								</div>
+								<div class="col-lg-6">
+									<label>Subscription Status</label><label style="color: red">&nbsp*</label>
+									<select ng-model="machine.curSubscriptionStatus"
+										ng-required="true" 
+										ng-options="curSubscriptionStatus for curSubscriptionStatus in curSubscriptionStatusData"
+										class="form-control" >
+									</select>
+								</div>
+							</div>
+							<!-- Hide dates if status is INACTIVE -->
+							<div ng-hide="machine.curSubscriptionStatus=='INACTIVE'">
+							<div class="row form-group">
+								<div class="col-lg-6">
+									<label>Subscription Start Date</label><label style="color: red">&nbsp*</label>
+									<div class='input-group'>
+										<input type="text" class="form-control date"
+											ng-click="curSubscriptionStartDate=true"
+											datepicker-popup="{{format}}"
+											ng-model="machine.curSubscriptionStartDate"
+											is-open="curSubscriptionStartDate" close-text="Close"
+											placeholder="DD-MM-YYYY" 
+											ng-required="machine.curSubscriptionStatus!='INACTIVE'"
+											id="machineCurSubscriptionStartDate" ng-change="setMachineSubEndDate()"> <label
+											class="input-group-addon"
+											for='machineCurSubscriptionStartDate'> <span
+											class="glyphicon glyphicon-calendar"></span>
+										</label>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<label>Subscription End Date</label><label style="color: red">&nbsp*</label>
+									<div class='input-group'>
+										<input type="text" class="form-control date"
+											ng-click="curSubscriptionEndDate=true"
+											datepicker-popup="{{format}}"
+											ng-model="machine.curSubscriptionEndDate"
+											is-open="curSubscriptionEndDate" close-text="Close"
+											placeholder="DD-MM-YYYY" 
+											ng-required="machine.curSubscriptionStatus!='INACTIVE'"
+											id="machineCurSubscriptionEndDate"> <label
+											class="input-group-addon" for='machineCurSubscriptionEndDate'>
+											<span class="glyphicon glyphicon-calendar"></span>
+										</label>
+									</div>
+								</div>
+							</div>	
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<!-- data-dismiss="modal" -->
+					<button id="btnSaveMachine" type="submit" class="btn btn-success" 
+						ng-disabled="addMachineForm.$invalid"
+						data-ng-click="onSaveMachine()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Submit
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!------------ - Modal for adding new phone device[OPERATOR]------------------------------------>
+<div id="addOperator" class="modal fade" role="dialog">
+	<form name="addOperatorForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+						<img src="/assets/images/add-new-mobile.png"
+							style="width: 25px; height: 25px;"></img> {{operatorModalTitle}}
+					</h4>
+				</div>
+				<div
+					style="padding: 3%; padding-right: 10%; padding-left: 10%; overflow: auto; height: auto;">
+					<div class="form-group">
+					<label>Operator Name </label><label style="color: red">&nbsp*</label>
+					<input class="form-control" ng-model="operator.operatorName"
+						ng-required="true" placeholder="Enter Operator Name"> 
+					</div>
+					
+					<div class="form-group">
+							<label>Mobile Number</label><label style="color: red">&nbsp*</label> 						
+						<!-- <div class="row">
+							<div class="col-lg-1 col-md-1 col-sm-1">	
+							<label style="border-color:white;" class="text-right form-control">+91</label>
+							</div>
+							<div class="col-lg-11 col-md-11 col-sm-11" >
+							<input type="text" class="form-control" ng-model="operator.phoneNumber"
+								placeholder="Enter Mobile Number with country code" 
+								title="Mobile Number Eg- +91xxxxxxxxxx">							 
+							</div> </div>-->
+							<input type="text" class="form-control" ng-model="operator.phoneNumber"
+								placeholder="Enter Mobile Number with country code">
+							<span style=" color:gray; font-family: verdana; font-size: 12px;">
+							Eg. +91xxxxxxxxxx</span>								 
+																		 
+					</div>
+					
+					<div class="form-group">
+						<label>Assign Location</label> <label style="color: red">&nbsp*</label> <select
+						class="form-control" ng-model="operator.locationId"
+						ng-required="true">
+						<option value="">-- Select --</option>
+						<option ng-repeat="loc in companyLocationsDropdown"
+							ng-selected="machine.locationId == loc.id" value="{{loc.id}}">
+							<span styly='text-color:darkblue;'>{{loc.companyLocationAddress.locationName}}</span>,
+							{{loc.companyLocationAddress.locationAddress}}
+						</option>
+					</select>
+					</div>			
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button id="btnSaveOperator" type="submit" class="btn btn-success"  
+						ng-disabled="addOperatorForm.$invalid"
+						data-ng-click="onSaveOperator()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Submit
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

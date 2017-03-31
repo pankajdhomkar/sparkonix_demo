@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+	<changeSet id="1" author="idx">
+
+		<!--users -->
+		<createTable tableName="users">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="email" type="varchar(255)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="alt_email" type="varchar(255)" />
+			<column name="password" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="mobile" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="role" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="notification_type" type="varchar(255)" />
+			<column name="metadata" type="jsonb" />
+		</createTable>
+
+		<!--company_details -->
+		<createTable tableName="company_details">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="company_type" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="company_name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="pan" type="varchar(20)">
+				<constraints nullable="false" unique="true" />
+			</column>
+
+			<column name="cust_support_name" type="varchar(255)" />
+			<column name="cust_support_phone" type="varchar(20)" />
+			<column name="cust_support_email" type="varchar(200)" />
+
+			<column name="cur_subscription_type" type="varchar(50)" />
+			<column name="cur_subscription_startdate" type="timestamp" />
+			<column name="cur_subscription_enddate" type="timestamp" />
+			<column name="cur_subscription_status" type="varchar(100)" />
+			<column name="on_boarded_by" type="bigint">
+				<constraints foreignKeyName="fk_users_company_details"
+					references="users(id)" />
+			</column>
+			<column name="metadata" type="jsonb" />
+		</createTable>
+
+		<!-- fk to company_details for user like- manufacturer/reseller/operator/technician -->
+		<addColumn tableName="users">
+			<column name="company_details_id" type="bigint" defaultValue="0" />
+		</addColumn>
+
+		<!--subscription_history -->
+		<createTable tableName="subscription_history">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="company_details_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_company_details_subscription_history"
+					references="company_details(id)" />
+			</column>
+			<column name="subscription_type" type="varchar(50)" />
+			<column name="subscription_startdate" type="timestamp" />
+			<column name="subscription_enddate" type="timestamp" />
+			<column name="subscription_status" type="varchar(50)" />
+			<column name="payment_metadata" type="jsonb" />
+		</createTable>
+
+		<!--company_locations -->
+		<createTable tableName="company_locations">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="company_details_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_company_details_company_locations" references="company_details(id)" />
+			</column>
+			<column name="address" type="jsonb" />
+			<column name="contact_person" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="contact_mobile" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="on_boarded_by" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_users_company_locations"
+					references="users(id)" />
+			</column>
+		</createTable>
+
+		<!--phone_devices -->
+		<createTable tableName="phone_devices">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="phone_number" type="varchar(20)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="device_id" type="varchar(50)" />
+			<column name="type" type="varchar(100)" />
+			<column name="operator_name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="customer_id" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_company_details_phone_devices"
+					references="company_details(id)" />
+			</column>
+			<column name="location_id" type="bigint">
+				<constraints foreignKeyName="fk_company_locations_location_id"
+					references="company_locations(id)" />
+			</column>
+			<column name="on_boarded_by" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_users_phone_devices"
+					references="users(id)" />
+			</column>
+			<column name="otp" type="varchar(100)" />
+
+		</createTable>
+
+		<!--machines -->
+		<createTable tableName="machines">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<!--Fk to qr_codes(qr_code) -->
+			<column name="qr_code" type="varchar(100)">
+				<constraints unique="true" />
+			</column>
+
+			<column name="serial_number" type="varchar(100)" />
+			<column name="name" type="varchar(255)" />
+			<column name="description" type="text" />
+			<column name="model_number" type="varchar(100)" />
+			<column name="machine_year" type="varchar(10)" />
+			<column name="customer_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_company_details_machines_customer_id"
+					references="company_details(id)" />
+			</column>
+			<column name="manufacturer_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_company_details_machines_manufacturer_id"
+					references="company_details(id)" />
+			</column>
+			<column name="reseller_id" type="bigint" defaultValue="0" />
+
+			<column name="installation_date" type="timestamp" />
+			<column name="warranty_expiry_date" type="timestamp" />
+			<column name="location_id" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_company_locations_machines"
+					references="company_locations(id)" />
+			</column>
+
+			<column name="cur_amc_type" type="varchar(50)" />
+			<column name="cur_amc_startdate" type="timestamp" />
+			<column name="cur_amc_enddate" type="timestamp" />
+			<column name="cur_amc_status" type="varchar(100)" />
+			<column name="cur_amc_documents" type="jsonb" />
+
+			<column name="cur_subscription_type" type="varchar(50)" />
+			<column name="cur_subscription_startdate" type="timestamp" />
+			<column name="cur_subscription_enddate" type="timestamp" />
+			<column name="cur_subscription_status" type="varchar(100)" />
+			<column name="on_boarded_by" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_users_machines"
+					references="users(id)" />
+			</column>
+			<column name="support_assistance" type="varchar(255)" />
+		</createTable>
+
+		<!--issues -->
+		<createTable tableName="issues">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="issue_number" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="machine_id" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_machines_issues"
+					references="machines(id)" />
+			</column>
+			<column name="reporting_device" type="bigint">
+				<constraints foreignKeyName="fk_phone_devices_issues"
+					references="phone_devices(id)" />
+			</column>
+			<column name="details" type="text" />
+			<column name="status" type="varchar(100)" />
+			<column name="date_reported" type="timestamp" />
+			<column name="date_assigned" type="timestamp" />
+			<column name="date_closed" type="timestamp" />
+			<!--Fk to users(id) -->
+			<column name="assigned_to" type="bigint" defaultValue="0" />
+
+			<column name="failure_reason" type="text" />
+			<column name="action_taken" type="text" />
+		</createTable>
+
+		<!--machine_documents -->
+		<createTable tableName="machine_documents">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="manufacturer_id" type="bigint">
+				<constraints nullable="false"
+					foreignKeyName="fk_company_details_machine_documents" references="company_details(id)" />
+			</column>
+			<column name="model_number" type="varchar(100)" />
+			<column name="documents" type="jsonb" />
+		</createTable>
+
+		<!--closed_issues -->
+		<createTable tableName="closed_issues">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="issue_number" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="machine_id" type="bigint">
+				<constraints nullable="false" foreignKeyName="fk_machines_closed_issues"
+					references="machines(id)" />
+			</column>
+			<column name="reporting_device" type="bigint">
+				<constraints foreignKeyName="fk_phone_devices_closed_issues"
+					references="phone_devices(id)" />
+			</column>
+			<column name="details" type="text" />
+			<column name="status" type="varchar(100)" />
+			<column name="date_reported" type="timestamp" />
+			<column name="date_assigned" type="timestamp" />
+			<column name="date_closed" type="timestamp" />
+			<column name="assigned_to" type="bigint">
+				<constraints foreignKeyName="fk_users_closed_issues"
+					references="users(id)" />
+			</column>
+			<column name="failure_reason" type="text" />
+			<column name="action_taken" type="text" />
+		</createTable>
+
+		<!--machine_subscription_history -->
+		<createTable tableName="machine_subscription_history">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="machine_id" type="bigint">
+				<constraints foreignKeyName="fk_machines_machine_subscription_history"
+					references="machines(id)" />
+			</column>
+			<column name="subscription_type" type="varchar(50)" />
+			<column name="subscription_startdate" type="timestamp" />
+			<column name="subscription_enddate" type="timestamp" />
+			<column name="subscription_status" type="varchar(50)" />
+			<column name="payment_metadata" type="jsonb" />
+		</createTable>
+
+		<!--machine_amc_history -->
+		<createTable tableName="machine_amc_history">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="machine_id" type="bigint">
+				<constraints foreignKeyName="fk_machines_machine_amc_history"
+					references="machines(id)" nullable="false" />
+			</column>
+			<column name="amc_type" type="varchar(50)" />
+			<column name="amc_startdate" type="timestamp" />
+			<column name="amc_enddate" type="timestamp" />
+			<column name="details" type="text" />
+			<column name="amc_status" type="varchar(50)" />
+			<column name="amc_document" type="jsonb" />
+			<column name="payment_metadata" type="jsonb" />
+		</createTable>
+
+		<!--machine_amc_service_history -->
+		<createTable tableName="machine_amc_service_history">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="machine_id" type="bigint">
+				<constraints foreignKeyName="fk_machines_machine_amc_service_history"
+					references="machines(id)" />
+			</column>
+			<column name="amc_id" type="bigint">
+				<constraints foreignKeyName="fk_machine_amc_history_machine_amc_service_history"
+					references="machine_amc_history(id)" />
+			</column>
+			<column name="details" type="text" />
+
+			<column name="servicing_assigned_date" type="timestamp" />
+			<column name="servicing_done_date" type="timestamp" />
+
+			<column name="assigned_to" type="bigint">
+				<constraints foreignKeyName="fk_users_machine_amc_service_history"
+					references="users(id)" />
+			</column>
+			<column name="action_taken" type="text" />
+			<column name="status" type="varchar(50)" />
+			<column name="metadata" type="jsonb" />
+			<column name="company_id" type="bigint">
+				<constraints foreignKeyName="fk_cpmpany_details_machine_amc_service_history"
+					references="company_details(id)" nullable="false" />
+			</column>
+		</createTable>
+
+		<!--qr_codes -->
+		<createTable tableName="qr_codes">
+			<column name="qr_code" type="varchar(100)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="batch_name" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="status" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="created_by" type="bigint">
+				<constraints foreignKeyName="fk_users_qr_codes"
+					references="users(id)" nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="2" author="indexnine">
+		<dropUniqueConstraint constraintName="company_details_pan_key"
+			schemaName="public" tableName="company_details" />
+	</changeSet>
+
+	<changeSet author="indexnine" id="3">
+		<addColumn tableName="phone_devices">
+			<column name="fcm_token" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="indexnine" id="4">
+		<dropColumn columnName="documents" schemaName="public"
+			tableName="machine_documents" />
+	</changeSet>
+
+	<changeSet author="indexnine" id="5">
+		<addColumn tableName="machine_documents">
+			<column name="document_path" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="machine_documents">
+			<column name="description" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="indexnine" id="6">
+		<addColumn tableName="issues">
+			<column name="phonedevice_operator_name" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="machine_location_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="machine_location_name_address" type="text" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="customer_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="customer_company_name" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="manufacturer_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="reseller_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="machine_support_assistance" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="indexnine" id="7">
+		<dropColumn columnName="machine_support_assistance"
+			schemaName="public" tableName="issues" />
+	</changeSet>
+	<changeSet author="indexnine" id="8">
+		<addColumn tableName="issues">
+			<column name="machine_support_assistance" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="indexnine" id="9">
+		<addColumn tableName="issues">
+			<column name="machine_model_number" type="varchar(100)" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="machine_serial_number" type="varchar(100)" />
+		</addColumn>
+		<addColumn tableName="issues">
+			<column name="machine_installation_date" type="timestamp" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="indexnine" id="10">
+		<addColumn tableName="issues">
+			<column name="technician_name" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="indexnine" id="11">
+		<dropForeignKeyConstraint baseTableName="machine_amc_service_history"
+			constraintName="fk_machine_amc_history_machine_amc_service_history" />
+	</changeSet>
+	
+	<changeSet id="12" author="indexnine">
+		<dropUniqueConstraint constraintName="phone_devices_phone_number_key"
+			schemaName="public" tableName="phone_devices" />
+	</changeSet>
+	<changeSet author="indexnine" id="13">
+		<createTable tableName="reset_password_token">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="token" type="text">
+			</column>
+			<column name="second_token" type="text">
+			</column>
+			<column name="email" type="text">
+			</column>
+			<column name="expiry_date" type="timestamp" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

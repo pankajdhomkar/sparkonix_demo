@@ -1,0 +1,156 @@
+<div>
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/company-details.png"
+				style="width: 50px; height: 50px;"></img>&nbsp; <span>
+				Company Details</span>
+		</h1>
+	</div>
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<div class="form-group">
+				<h5><b>Company Details:</b></h5>
+				<p>Company Name : {{companyDetails.companyName}}</p>
+				<p>Company PAN : {{companyDetails.pan}}</p>
+			</div>
+			<hr>
+			<div class="form-group">
+				<h5>
+					<b>Customer Support Details:</b> <span class="pull-right">
+						<button type="button" 
+							class="pull-right btn btn-primary btn-xs"
+							title="Edit customer support details" data-toggle="modal"
+							data-target="#editCustSupport">
+							<span class="fa fa-edit"></span> Edit
+						</button>
+
+					</span>
+				</h5>
+				<p>Contact Name : {{companyDetails.custSupportName}}</p>
+				<p>Contact Number :	{{companyDetails.custSupportPhone}}</p>
+				<p>Contact Email :	{{companyDetails.custSupportEmail}}</p>
+			</div>
+			<hr>
+			<div class="form-group">
+				<h5>
+					<b>Reset Web Admin Password </b><span class="pull-right">
+						<button type="button" ng-click="editCustomerSupportDetails()"
+							class="pull-right btn btn-primary btn-xs"
+							title="Reset web admin password" data-toggle="modal"
+							data-target="#editWebAdminPassword">
+							<span class="fa fa-edit"></span> Reset
+						</button>
+					</span>
+				</h5>
+			</div>
+			<hr>
+		</div>
+	</div>
+	<div class="row text-center">
+		<button type="button" class="btn btn-danger" ng-click="onClose()">
+			<i class="glyphicon glyphicon-remove-sign"></i>&nbsp; Close
+		</button>
+	</div>
+</div>
+
+<!------------ - Modal for edit cusotmer support details ------------------------------------>
+<div id="editCustSupport" class="modal fade" role="dialog">
+	<form name="editCustSupportForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+						<img src="/assets/images/add-new-customers.png"
+							style="width: 25px; height: 25px;"></img> Edit Customer Support
+						Details
+					</h4>
+				</div>
+				<div
+					style="padding: 3%; padding-right: 10%; padding-left: 10%; overflow: auto; height: auto;">
+					<div class="form-group">
+						<label>Contact Name </label><label style="color: red">&nbsp*</label>
+						<input class="form-control" ng-model="companyDetails.custSupportName"
+							ng-required="true" placeholder="Enter Contact Name">
+					</div>
+					<div class="form-group">
+						<label>Contact Number</label><label style="color: red">&nbsp*</label>
+						<input class="form-control"
+							ng-model="companyDetails.custSupportPhone" ng-required="true"
+							placeholder="Enter Contact Number"> <span
+							style="color: gray; font-family: verdana; font-size: 12px;">
+							Eg. 020-27470643 OR +91xxxxxxxxxx </span>
+					</div>
+					<div class="form-group">
+						<label>Contact Email</label><label style="color: red">&nbsp*</label>
+						<input type="email" class="form-control" ng-model="companyDetails.custSupportEmail"
+							ng-required="true" placeholder="Enter Contact Email">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal"
+						ng-disabled="editCustSupportForm.$invalid"
+						data-ng-click="onSaveCustomerSupportDetails()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<!------------ - Modal for edit cusotmer support details ------------------------------------>
+<div id="editWebAdminPassword" class="modal fade" role="dialog">
+	<form name="updateWebAdminPassword">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+						<img src="/assets/images/subscription.png"
+							style="width: 25px; height: 25px;"></img> 
+							Reset Password
+					</h4>
+				</div>
+				<div
+					style="padding: 3%; padding-right: 10%; padding-left: 10%; overflow: auto; height: auto;">
+					<div class="form-group">
+						<label>Old Password </label><label style="color: red">&nbsp*</label>
+						<input type="password" class="form-control" ng-model="webAdmin.oldPassword"
+							ng-required="true" placeholder="Enter Old Password">
+					</div>
+					<div class="form-group">
+						<label>New Password</label><label style="color: red">&nbsp*</label>
+						<input type="password" class="form-control" ng-model="webAdmin.newPassword"
+							ng-required="true" placeholder="Enter New Password">
+						
+					</div>
+					<div class="form-group">
+						<label>Confirm Password</label><label style="color: red">&nbsp*</label>
+						<input type="password" class="form-control" ng-model="webAdmin.confirmNewPassword"
+							ng-required="true" placeholder="Confirm Password">
+					</div>
+					<div>
+						<!-- ng-show="newUser.password != password2"  -->
+						<span ng-show="(webAdmin.newPassword != webAdmin.confirmNewPassword) && (webAdmin.confirmNewPassword !=='')" style="color: red">Password
+							mismatch</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button type="submit" class="btn btn-success" data-dismiss="modal"
+						ng-disabled="(updateWebAdminPassword.$invalid) || webAdmin.newPassword !== webAdmin.confirmNewPassword"
+						data-ng-click="onUpdateWebAdminPassword()">
+						<i class="fa fa-plus-circle"></i>&nbsp; Update
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,128 @@
+<div ng-if="!parent" ui-view></div>
+<div ng-if="parent">
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/customers.png"
+				style="width: 50px; height: 50px;"></img>&nbsp; <span> Manage
+				Customers</span>
+			<button class="btn btn-primary pull-right" type="button"
+				ng-click="addNewCustomer()">
+				<i class="fa fa-plus-circle"></i>&nbsp; Add New Customer
+			</button>
+		</h1>
+	</div>
+
+	<div class="panel panel-default" style="width: 100%;">
+		<div class="panel-heading">
+			<b>Customer Summary</b>
+		</div>
+		<div class="panel-body table-responsive">
+			<div class="row text-center" ng-if="companyDetailData.length==0">
+				<br>
+				<h4>
+					<label>There are no Customers</label>
+				</h4>
+				<br>
+			</div>
+			
+			<div class="row text-center" ng-if="companyDetailData.length>0">
+				<div class="form-group">
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						<label>Total Customers :</label> {{totalCustomers}}
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						<label>Total Locations :</label> {{totalLocations}} 
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						<label>Total Machines :</label> {{totalMachines}} 
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						<label>Total Operators :</label> {{totalOperators}} 
+					</div>
+				</div>				  
+			</div>
+
+		</div>
+	</div>
+	
+	<div class="panel panel-default" style="width: 100%;">
+		<div class="panel-heading">
+			<b>Customer Details</b>
+		</div>
+		<div class="panel-body table-responsive">
+			<div class="row text-center" ng-if="companyDetailData.length==0">
+				<br>
+				<h4>
+					<label>There are no Customers</label>
+				</h4>
+				<br>
+			</div>
+			
+			<table datatable class="table table-bordered table-striped"	ng-if="companyDetailData.length>0">
+				<thead>
+					<tr>
+						<td><b>Company Name</b></td>
+						<td><b>PAN</b></td>
+						<td><b>Address</b></td>
+						<td><b>Contact details</b></td>
+						<td><b>Factory Locations</b></td>
+						<td><b>Machines</b></td>
+						<td><b>Authorized Operators</b></td>
+						<td><b>Current Subscription Status</b></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="customer in companyDetailData track by $index"
+						class="item">
+						<td>
+							<button style="text-align: left;" class="btn-link" type="button"
+								ng-click="editCustomer(customer.companyDetail,1)">
+								{{customer.companyDetail.companyName}}</button>
+						</td>
+
+						<td>{{customer.companyDetail.pan}}</td>
+						<td>{{customer.companyDetail.address}}</td>
+						<td style="font-family: verdana; font-size: 11px;"><span
+							ng-if="customer.custSupportName!=''"> <span title="Name"
+								class="glyphicon glyphicon-user"></span>
+								{{customer.companyDetail.custSupportName}}<br> <span
+								title="Phone No." class="glyphicon glyphicon-phone-alt"></span>
+								{{customer.companyDetail.custSupportPhone}}
+						</span></td>
+						<td align="center">
+							<button class="btn-link btn-sm" type="button"
+								ng-click="editCustomer(customer.companyDetail,2)"
+								title="Add/Edit Location">
+								<b><span ng-if="customer.factoryLocationsCount!=0">{{customer.factoryLocationsCount}}</span>
+									<span ng-if="customer.factoryLocationsCount==0">0</span> </b>
+							</button>
+						</td>
+						<td align="center">
+							<button class="btn-link btn-sm" type="button"
+								ng-click="editCustomer(customer.companyDetail,3)"
+								title="Add/Edit Machine">
+								<b> <span ng-if="customer.machinesCount!=0">{{customer.machinesCount}}</span>
+									<span ng-if="customer.machinesCount==0">0</span>
+								</b>
+							</button>
+						</td>
+						<td align="center">
+							<button class="btn-link btn-sm" type="button"
+								ng-click="editCustomer(customer.companyDetail,4)"
+								title="Add/Edit Operator">
+								<b> <span ng-if="customer.operatorsCount!=0">{{customer.operatorsCount}}</span>
+									<span ng-if="customer.operatorsCount==0">0</span>
+								</b>
+							</button>
+						</td>
+						<td>{{customer.companyDetail.curSubscriptionStatus}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+
+</div>

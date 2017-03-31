@@ -1,0 +1,38 @@
+<div>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">Welcome {{loggedUser}}</h1>
+		</div>
+	</div>
+
+	<div class="row">
+		<!-- <a><salesteam_stats number={{numTenants}}
+				comments="Tenants" colour="primary" type="fa fa-user"></salesteam_stats></a> 
+		<a><salesteam_stats number={{numCourses}}
+				comments="Courses" colour="green" type="fa fa-book"></salesteam_stats></a>
+		<a><salesteam_stats number={{numBatches}}
+				comments="Batches" colour="yellow" type="fa fa-group"></salesteam_stats></a>
+		<a><salesteam_stats number={{numStudents}} 
+				comments="Students" colour="red" type="fa  fa-graduation-cap"></salesteam_stats></a> -->
+		 
+		
+		<a ui-sref="home.managecustomers">
+			<salesteam_stats number={{numCustomers}} comments="Customers" colour="red" 
+			image="/assets/images/customers_bk.png">
+		</salesteam_stats></a>
+		
+		<a ui-sref="home.managetechnicians">
+			<salesteam_stats   comments="Technician" colour="info" 
+			image="/assets/images/technician_bk.png">
+		</salesteam_stats></a>
+		
+		<a ui-sref="home.managecomplaints">
+			<salesteam_stats   comments="Complaint / Servicing" colour="primary" 
+			image="/assets/images/problem_bk.png">
+		</salesteam_stats></a>
+		
+		 				
+				
+	</div>
+
+</div>

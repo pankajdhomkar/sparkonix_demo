@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>AttendMe</title>
+	<meta name="viewport" content="width=device-width">
+ 
+<!-- ________________________VENDOR STYLES _________________________________-->
+
+<link rel="stylesheet" href="assets/bower_components/bootstrap/dist/css/bootstrap.css" />
+<!-- <link rel="stylesheet" href="assets/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" /> -->
+<link rel="stylesheet" href="assets/bower_components/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="assets/bower_components/metisMenu/dist/metisMenu.min.css">
+<link rel="stylesheet" href="assets/styles/main.css">
+<link rel="stylesheet" href="assets/styles/sb-admin-2.css">
+<link rel="stylesheet" href="assets/support/support.css">
+<link rel="stylesheet" href="assets/bower_components/angular-dialog-service-5.2.8/dist/dialogs.css">
+<link rel="stylesheet" href="assets/dataTables/dataTables.bootstrap.min.css">
+<!--select box with auto-search  -->
+<link rel="stylesheet" href="assets/bower_components/ui-select/select.css">
+<link rel="stylesheet" href="assets/bower_components/ui-select/selectize.default.css">
+<!-- ________________________VENDOR SCRIPTS _________________________________-->
+
+<script src="assets/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="assets/bower_components/jquery/dist/jquery-ui.js"></script>
+<script src="assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="assets/bower_components/angular/angular.min.js"></script>
+<script src="assets/bower_components/angular/angular-ui.min.js"></script>
+<script src="assets/bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="assets/bower_components/angular-ui-router/angular-ui-router.min.js"></script>
+<script src="assets/bower_components/angular-resource/angular-resource.js"></script>
+<!-- <script src="assets/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script> -->
+<script src="assets/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="assets/support/support.js"></script>
+<script src="assets/bower_components/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
+<script	src="assets/bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script	src="assets/bower_components/angular-dialog-service-5.2.8/dist/dialogs.js"></script>
+<script src="assets/cryptojs/md5.js"></script>
+<script src="assets/dataTables/jquery.dataTables.min.js"></script>
+<script src="assets/dataTables/dataTables.bootstrap.min.js"></script>
+<script src="assets/dataTables/angular-datatables.min.js"></script>
+<!--select box with auto-search  -->
+<script src="assets/bower_components/ui-select/select.js"></script>
+<script src="assets/upload_excel/xlsx.core.min.js"></script>
+<script src="assets/upload_excel/FileSaver.js"></script>
+
+
+</head>
+
+<body style="overflow: scroll; margin-top: 0px; padding: 0px;">
+	<div ng-app="sparkonixWebApp" ng-controller="appController">
+		<div ui-view></div>
+	</div>
+	<!-- _________________________LOAD OUR SCRIPTS_________________________ -->
+	<script src="../assets/restapi/restAPIService.js"></script>
+	<script src="../assets/upload_excel/parseExcelService.js"></script>
+	<script src="app.js"></script>
+	<script src="sb-admin-2.js"></script>
+
+	<!-- ____HOME AND HEADER___ -->
+	<script src="home/homeController.js"></script>
+	<script src="header/headerDirective.js"></script>
+	<script src="header/headerController.js"></script>
+	<script src="header/headernotification/headernotificationDirective.js"></script>
+	<script src="header/headernotification/headernotificationController.js"></script>
+	<!-- ____LOGIN___ -->
+	<script src="login/loginController.js"></script>
+	<script src="login/resetPasswordController.js"></script>
+
+	<!-- ____SALES TEAM WORKFLOW___ -->
+	<script src="salesteam/st_sidebar/st_sidebarDirective.js"></script>
+	<script src="salesteam/st_sidebar/st_sidebarController.js"></script>
+	<script src="salesteam/st_dashboard/stats/salesteamStats.js"></script>
+	<script src="salesteam/st_dashboard/st_dashboardController.js"></script>
+	
+	<!-- ____SUPER ADMIN WORKFLOW___ -->
+	<script src="superadmin/sa_sidebar/sa_sidebarDirective.js"></script>
+	<script src="superadmin/sa_sidebar/sa_sidebarController.js"></script>
+	<script src="superadmin/sa_dashboard/stats/superadminStats.js"></script>
+	<script src="superadmin/sa_dashboard/sa_dashboardController.js"></script>
+	
+	<!-- ____TECHNICIAN WORKFLOW___ -->
+	<script src="technician/tc_sidebar/tc_sidebarDirective.js"></script>
+	<script src="technician/tc_sidebar/tc_sidebarController.js"></script>
+	<script src="technician/tc_dashboard/stats/technicianStats.js"></script>
+	<script src="technician/tc_dashboard/tc_dashboardController.js"></script>
+	
+	<!-- ____WEB ADMIN WORKFLOW___ -->
+	<script src="webadmin/wa_sidebar/wa_sidebarDirective.js"></script>
+	<script src="webadmin/wa_sidebar/wa_sidebarController.js"></script>
+	<script src="webadmin/wa_dashboard/stats/webadminStats.js"></script>
+	<script src="webadmin/wa_dashboard/wa_dashboardController.js"></script>
+	<script src="webadmin/wa_profile/wa_profileController.js"></script>
+	<script src="webadmin/wa_reports/wa_reportsController.js"></script>
+	
+	<!-- ____MANAGE CUSTOMERS___ -->
+	<script src="managecustomers/managecustomersController.js"></script>
+	<script src="managecustomers/addcustomer/addcustomerController.js"></script>
+	
+	<!-- ____MANAGE COMPLAINTS___ -->
+	<script src="managecomplaints/managecomplaintsController.js"></script>
+	
+	<!-- ____MANAGE MANUFATURERS AND RESELLERS___ -->
+	<script src="managemanres/managemanresController.js"></script>
+	<script src="managemanres/addmanres/addmanresController.js"></script>
+	<script src="managemanres/addmanres/viewmanresController.js"></script>
+	
+	<!-- ____MANAGE SALES TEAM___ -->
+	<script src="managesalesteam/managesalesteamController.js"></script>
+	
+	<!-- ____MANAGE TECHNICIANS___ -->
+	<script src="managetechnicians/managetechniciansController.js"></script>
+
+	<!-- ____MANAGE QR CODES___ -->
+	<script src="manageqrcodes/manageqrcodesController.js"></script>
+	
+	<!-- ____MANAGE MACHINE DOCUMENTS___ -->
+	<script src="managemachinedocuments/managemachinedocumentsController.js"></script>
+	
+	<!-- ____MANAGE SUBSCRIPTIONS REPORTS___ -->
+	<script src="managesubscriptions/managesubscriptionsController.js"></script>
+	
+	<!-- ____MANAGE SUBSCRIPTIONS REPORTS___ -->
+	<script src="managebroadcastmessages/managebroadcastmessagesController.js"></script>
+	
+</body>
+</html>

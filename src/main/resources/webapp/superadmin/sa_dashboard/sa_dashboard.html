@@ -1,0 +1,36 @@
+<div>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">Welcome {{loggedUser}}</h1>
+		</div>
+	</div>
+
+	<div class="row">		 
+				
+		<a ui-sref="home.managemanres"><superadmin_stats number={{numMan}} comments="Manufacturers" colour="red" 
+		image="/assets/images/customers_bk.png"></superadmin_stats></a>
+		
+		<!-- <a ui-sref="home.managemanres"><superadmin_stats number={{numRes}} comments="Resellers" colour="green" 
+		image="/assets/images/customers_bk.png"></superadmin_stats></a> -->
+		
+		<a ui-sref="home.managesalesteam"><superadmin_stats number={{numSalesTeam}} comments="Sales Team" colour="primary" 
+		image="/assets/images/sales-team_bk.png"></superadmin_stats></a>
+		
+		<a ui-sref="home.managecustomers"><superadmin_stats number={{numCustomers}} comments="Customers" colour="yellow" 
+		image="/assets/images/customers_bk.png"></superadmin_stats></a>
+		
+		<a ui-sref="home.manageqrcodes"><superadmin_stats number={{numQrCodes}} comments="QR Codes" colour="info" 
+		image="/assets/images/authorisedmobile_bk.png"></superadmin_stats></a>
+		
+		
+		<!-- <a><superadmin_stats number={{numSalesTeam}} comments="Sales Team"
+				colour="yellow" type="fa fa-user"></superadmin_stats></a> 
+				
+		<a><superadmin_stats number={{numCustomers}} comments="Customers"
+				colour="green" type="fa fa-group"></superadmin_stats></a> 
+		
+		<a><superadmin_stats number={{numQrCodes}} comments="QR Codes" colour="primary"
+				type="fa fa-qrcode"></superadmin_stats></a>  -->		
+	</div>
+
+</div>
