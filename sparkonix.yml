@@ -1,0 +1,123 @@
+template: Hello, %s!
+
+defaultName: ${DW_DEFAULT_NAME:-SPARKONIX}
+
+# Database settings.
+database:  
+  driverClass: org.postgresql.Driver  
+#  user: postgres  
+#  password: 123456  
+#  url: jdbc:postgresql://localhost:5432/sparkonix_dev
+  user: postgres
+  password: symphony
+  url: jdbc:postgresql://localhost:5433/TestWeb
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  maxWaitForConnection: 3s
+  validationQuery: "/* MyApplication Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: true
+
+# use the simple server factory if you only want to run on a single port
+#server:
+#  type: simple
+#  connector:
+#    type: http
+#    port: 8080
+
+server:
+#  softNofileLimit: 1000
+#  hardNofileLimit: 1000
+  applicationConnectors:
+    - type: http
+      port: 8080
+    - type: https
+      port: 8443
+      keyStorePath: sparkonix.keystore
+      keyStorePassword: example
+      validateCerts: false
+      validatePeers: false
+    #this requires the alpn-boot library on the JVM's boot classpath
+    #- type: h2
+    #  port: 8445
+    #  keyStorePath: sparkonix.keystore
+    #  keyStorePassword: example
+    #  validateCerts: false
+    #  validatePeers: false
+  adminConnectors:
+    - type: http
+      port: 8081
+    - type: https
+      port: 8444
+      keyStorePath: sparkonix.keystore
+      keyStorePassword: example
+      validateCerts: false
+      validatePeers: false
+
+# Logging settings.
+logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+
+    # Sets the level for 'com.sparkonix.app' to DEBUG.
+    com.sparkonix.app: DEBUG
+
+    # Redirects SQL logs to a separate file
+    org.hibernate.SQL:
+      level: DEBUG
+
+# Logback's Time Based Rolling Policy - archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}.log.gz
+# Logback's Size and Time Based Rolling Policy -  archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}-%i.log.gz
+# Logback's Fixed Window Rolling Policy -  archivedLogFilenamePattern: /tmp/application-%i.log.gz
+
+  appenders:
+    - type: console
+    - type: file
+      threshold: INFO
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      currentLogFilename: /tmp/sparkonix.log
+      archivedLogFilenamePattern: /tmp/sparkonix-%d{yyyy-MM-dd}-%i.log.gz
+      archivedFileCount: 7
+      timeZone: UTC
+      maxFileSize: 10MB
+
+#metrics:
+#  reporters:
+#    - type: graphite
+#      host: 127.0.0.1
+#      port: 2003
+#      prefix: sparkonix
+#      frequency: 10s
+
+authenticationCachePolicy: maximumSize=10000, expireAfterAccess=10m
+
+#Email Credentials
+domainurl: http://ec2-35-154-128-120.ap-south-1.compute.amazonaws.com:8080
+mailUsername : attendme1@gmail.com
+mailPassword : QRATTEND
+mailHost : smtp.gmail.com
+mailSetFrom : fromemail@gmail.com
+
+#SMS Credentials for smsgatewayhub
+smsSenderId : ATNDME
+smsApiUrl : https://www.smsgatewayhub.com
+smsApiKey : k7MMDgSDzUKl6FCktQzcJg
+
+#SuperAdmin Credentials
+superadminUsername : info@attendme.in
+superadminPassword : "@Spark*123"
+superadminEmail : info@attendme.in
+
+#temp directory path to save QRcode images
+qrCodeImagesDirectory : C:\\qrcodes
+
+fcmServerKey : AIzaSyAmr1BGtc1rXiJf5yOS-XkFuc_tuKuexlU
+
+#directory to store machine documents
+machineDocsDirectory : C:\\machineDocuments

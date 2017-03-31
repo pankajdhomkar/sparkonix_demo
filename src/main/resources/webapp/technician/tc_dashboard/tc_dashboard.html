@@ -1,0 +1,22 @@
+<div>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">Welcome {{loggedUser}}</h1>
+		</div>
+	</div>
+
+	<div class="row">
+		<a ui-sref="home.managecomplaints"><technician_stats number={{numMan}}
+				comments="Complaints" colour="red"
+				image="/assets/images/customers_bk.png"></technician_stats></a>
+		
+		<a ui-sref="home.managecomplaints"><technician_stats number={{numMan}}
+				comments="Servicing" colour="primary"
+				image="/assets/images/customers_bk.png"></technician_stats></a>		
+
+		<!-- <a><technician_stats number={{numTenants}}
+				comments="Tenants" colour="primary" type="fa fa-user"></technician_stats></a>  -->
+
+	</div>
+
+</div>

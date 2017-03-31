@@ -1,0 +1,158 @@
+<div>
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/machine-document.png" style="width:50px;height:50px;"></img>&nbsp;
+			<span> Machine Documents</span>
+			<button class="btn btn-primary pull-right" type="button" ng-click="uploadDocument()">
+				<i class="fa fa-plus-circle"></i>&nbsp; Upload New Document
+			</button>
+		</h1>
+	</div>
+        
+	<div>
+		<div class="row text-center" ng-if="documents.length==0"><br>
+			<h4><label>There are no Documents</label></h4><br>
+		</div>
+		 
+		<div class="panel panel-default table-responsive" ng-repeat="m in manufacturerNames track by $index">
+					<div class="panel-heading">
+						<span ng-if="user.role != 'MANUFACTURERADMIN'">
+						<b>Manufacturer : </b>{{machineDocByManufacturer[m][0].manufacturerName}}						 
+						</span>	
+						<a title="Expand" class="btn pull-right"
+							ng-class="{false: 'btn-primary fa fa-minus', true: 'btn-primary fa fa-plus'}[!panelcollapse[$index]]"
+							ng-click="panelcollapse[$index] = !panelcollapse[$index]"></a> <br>
+						<b>Number of documents: </b>{{machineDocByManufacturer[m].length}}
+					</div>
+					<div class="panel-body" ng-if="panelcollapse[$index]">
+						<div class="col-lg-12 col-md-12 col-sm-12 ">
+							<table id="machineListTable{{$index}}" datatable dt-options="{'order': [[colOrder,'asc']]}" 
+								class="table table-bordered table-striped" style="width: 100%;">
+								<thead>
+									<tr>
+										<td ng-if="user.role != 'MANUFACTURERADMIN'">
+										<b>Manufacturer Name</b></td>
+										<td><b>Machine Model</b></td>
+										<td><b>Description</b></td>
+										<td class="text-center"><b>Download</b></td>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr	ng-repeat="document in machineDocByManufacturer[m] track by $index"
+										class="item">
+										<td ng-if="user.role != 'MANUFACTURERADMIN'">
+										{{ document.manufacturerName }}</td>	
+										<td>{{ document.modelNumber }}</td>	
+										<td>{{ document.description }}</td>		
+										<td class="text-center">
+											<a target="_self" ng-href="{{downloadFilePath}}/{{document.manufacturerId}}/{{document.documentPath}}" download="{{document.documentPath}}" >
+												<button title="Download document" class="btn btn-primary btn-xs" type="button"
+												ng-click=""><i class="glyphicon glyphicon-download"></i>
+												</button> 
+											</a>	
+										</td>
+										
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+		
+		
+		
+		
+		<!-- <table datatable class="table table-bordered table-striped table-responsive" ng-if="documents.length>0" style="width: 100%;">
+			<thead>
+				<tr>
+					<td ng-if="user.role != 'MANUFACTURERADMIN'"><b>Manufacturer</b></td>
+					<td><b>Machine Model</b></td>
+					<td><b>Description</b></td>
+					<td class="text-center"><b>Download</b></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="document in documents track by $index" class="item">	
+					<td ng-if="user.role != 'MANUFACTURERADMIN'">{{ document.manufacturerName }}</td>	
+					<td>{{ document.modelNumber }}</td>	
+					<td>{{ document.description }}</td>		
+					<td class="text-center">
+						<button class="btn btn-primary btn-xs" type="button" ng-click="onDownloadDocument(document)"> 
+							<i class="fa fa-cloud-download"></i></button>
+						<a target="_self" ng-href="{{downloadFilePath}}/{{document.manufacturerId}}/{{document.documentPath}}" download="{{document.documentPath}}" >
+							<button title="Download document" class="btn btn-primary btn-xs" type="button"
+								ng-click="">
+								<i class="glyphicon glyphicon-download"></i></button> 
+						</a>	
+					</td>
+				</tr>
+			</tbody>
+		</table> -->
+	</div>
+</div>
+
+<!---------------------------------- Modal Dialog for upload document ------------------------->
+<div id="uploadDoc" class="modal fade" role="dialog">
+	<form name="uploadDocForm">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+					<img src="/assets/images/add-new-document.png"
+							style="width: 25px; height: 25px;"></img> Upload Document</h4>
+					
+				</div>
+				 
+				<div style="padding: 3%; padding-right: 10%; padding-left: 10%; height: 360px;">
+					<span ng-show="user.role == 'SUPERADMIN'">
+					<label >Manufacturer</label> 
+					<label style="color: red">&nbsp*</label>
+					<select  class="form-control" ng-model="newDocument.manufacturerId" 
+					ng-change="getMachineModelNumberList()">
+						<option value="">-- Select Manufacturer --</option>
+						<option ng-repeat="m in manufacturers" value="{{m.id}}">{{m.companyName}}</option>
+					</select>
+					</span>
+					
+					<label>Machine Model Number</label> <label style="color: red">&nbsp*</label>
+					<div style="padding: 0px 0px 5px 15px;">					 
+						<p>	<input style="cursor: pointer;" id="exist" type="radio" name="machineModelNumber" 
+						ng-model="modelNumber" value="exist">
+							<label style="cursor: pointer; font-weight: normal;" for="exist">Choose Existing Model Number</label></p>
+							<select  class="form-control"  ng-model="newDocument.modelNumber" 
+							ng-hide="modelNumber!='exist'">
+								<option value="">-- Select Model Number --</option>
+								<option ng-repeat="m in machineModelNumbers" value="{{m.modelNumber}}">{{m.modelNumber}}</option>
+							</select>
+						
+						<p> <input style="cursor: pointer;" id="non_exist" type="radio" name="machineModelNumber" 
+						ng-model="modelNumber" value="non_exist" ng-click="newDocument.modelNumber=''">
+							<label style="cursor: pointer; font-weight: normal;" for="non_exist">Enter New Model Number</label></p> 
+							<input class="form-control" ng-model="newDocument.modelNumber" ng-required="true"
+							placeholder="Enter New Model Number" ng-hide="modelNumber!='non_exist'">
+					</div>
+					
+					<label>Description</label> <label style="color: red">&nbsp*</label>
+					<input class="form-control" ng-model="newDocument.description" maxlength="250" ng-required="true"
+					placeholder="Enter Description">
+					
+					<label>Choose File</label> <label style="color: red">&nbsp*</label>					 
+					<input type="file" id="fileLoader" ng-required="true"
+					onchange="angular.element(this).scope().onFileSelect()" multiple>
+					
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-minus-circle"></i>&nbsp; Cancel
+					</button>
+					<button id="btnUploadDoc" type="submit" class="btn btn-success" data-dismiss="" 
+						ng-disabled="(uploadDocForm.$invalid)" data-ng-click="startUpload()">
+						<i class="fa fa-cloud-upload"></i>&nbsp; Upload
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

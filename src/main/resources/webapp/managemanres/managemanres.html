@@ -1,0 +1,144 @@
+<div ng-if="!parent" ui-view></div>
+
+<div ng-if="parent">
+	<div class="row">
+		<h1 class="page-header">
+			<img src="/assets/images/customers.png"
+				style="width: 50px; height: 50px;"></img>&nbsp; <span>
+				Manufacturers and Resellers</span>
+			<button class="btn btn-primary pull-right" type="button"
+				ng-click="addNewManRes()">
+				<i class="fa fa-plus-circle"></i>&nbsp; Add New
+				Manufacturer/Reseller
+			</button>
+		</h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li ng-class="{active:isSet(1)}"><a href ng-click="setTab(1)"><b>Manufacturers</b></a></li>
+		<li ng-class="{active:isSet(2)}"><a href ng-click="setTab(2)"><b>Resellers</b></a></li>
+	</ul>
+
+	<div ng-show="isSet(1)">
+		<!-- ----- Manufacturer details ----- -->
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<b>Manufacturer</b>
+			</div>
+			<div class="panel-body">
+				<div class="row text-center" ng-if="manufacturers.length == 0">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<h4>
+							<label>There are no Manufacturers</label>
+						</h4>
+					</div>
+				</div>
+				<div class="row" ng-if="manufacturers.length > 0">
+					<div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
+						<table datatable class="table table-bordered table-striped" style="width: 100%;">
+							<thead>
+								<tr>
+									<td style="width: 30%;"><b>Company Name</b></td>
+									<td style="width: 20%;"><b>PAN</b></td>
+									<td style="width: 30%;"><b>Customer support details</b></td>
+									<td style="width: 10%;"><b>Status</b></td>
+									<td style="width: 10%;"><b>Action</b></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="manufacturer in manufacturers track by $index"
+									class="item">
+									<td class="text-left"> 									
+									<button style="text-align: left;" class="btn-link" type="button"
+									ng-click="viewManRes(manufacturer.id)">{{manufacturer.companyName}}</button>
+								
+									</td>
+									<td>{{manufacturer.pan}}</td>
+									<td class="text-left"><span
+										ng-if="customer.custSupportName!=''"> <span
+											title="Support Name" class="glyphicon glyphicon-user"></span>
+											{{manufacturer.custSupportName}}<br> <span
+											title="Phone No." class="glyphicon glyphicon-phone-alt"></span>
+											{{manufacturer.custSupportPhone}}<br> <span
+											title="Email" class="glyphicon glyphicon-envelope"></span>
+											{{manufacturer.custSupportEmail}}
+									</span></td>
+									<td title="Current Subscription Status">{{manufacturer.curSubscriptionStatus}}</td>
+									<td>
+										<button type="button" ng-model="editMode"
+											class="btn btn-primary btn-xs"
+											ng-click="editManRes(manufacturer.id)">
+											<span class="glyphicon glyphicon-edit"></span> Edit
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-show="isSet(2)">
+		<!-- ----- Reseller details ----- -->
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<b>Reseller Details</b>
+			</div>
+			<div class="panel-body">
+				<div class="row text-center" ng-if="resellers.length == 0">
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<h4>
+							<label>There are no Resellers</label>
+						</h4>
+					</div>
+				</div>
+
+				<div class="row" ng-if="resellers.length > 0">
+					<div class="col-lg-12 col-md-12 col-sm-12 table-responsive">
+						<table datatable class="table table-bordered table-striped" style="width: 100%;">
+							<thead>
+								<tr>
+									<td style="width: 30%;"><b>Company Name</b></td>
+									<td style="width: 20%;"><b>PAN</b></td>
+									<td style="width: 30%;"><b>Customer support details</b></td>
+									<td style="width: 20%;"><b>Current Subscription Status</b></td>
+									<td style="width: 10%;"><b>Action</b></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="reseller in resellers track by $index"
+									class="item">
+									<td style="width: 30%;" class="text-left">
+									<button style="text-align: left;" class="btn-link" type="button" 
+									ng-click="viewManRes(reseller.id)">{{reseller.companyName}}</button>
+									</td>									
+									<td style="width: 20%;">{{reseller.pan}}</td>
+									<td style="width: 30%;" class="text-left"><span
+										ng-if="customer.custSupportName!=''"> <span
+											title="Support Name" class="glyphicon glyphicon-user"></span>
+											{{reseller.custSupportName}}<br> <span title="Phone No."
+											class="glyphicon glyphicon-phone-alt"></span>
+											{{reseller.custSupportPhone}}<br> <span title="Email"
+											class="glyphicon glyphicon-envelope"></span>
+											{{reseller.custSupportEmail}}
+									</span></td>
+									<td style="width: 20%;">{{reseller.curSubscriptionStatus}}</td>
+									<td>
+										<button type="button" ng-model="editMode"
+											class="btn btn-primary btn-xs"
+											ng-click="editManRes(reseller.id)">
+											<span class="glyphicon glyphicon-edit"></span> Edit
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
